@@ -42,8 +42,8 @@ jobs:
       - name: 备份需要保留的文件
         run: |
           if [ -f ".github/last_activity.md" ]; then
-            echo "📦 备份本地的 .github/last_activity.md 文件"
-            cp ".github/last_activity.md" "$RUNNER_TEMP/last_activity.md.backup"
+            echo "📦 备份本地的 last_activity.md 文件"
+            cp .github/last_activity.md .github/last_activity.md.backup
           fi
       
       - name: 合并上游变更
@@ -65,16 +65,11 @@ jobs:
           
       - name: 恢复需要保留的文件
         run: |
-          if [ -f "$RUNNER_TEMP/last_activity.md.backup" ]; then
-            echo "📦 恢复本地的 .github/last_activity.md 文件"
-            mkdir -p .github
-            cp "$RUNNER_TEMP/last_activity.md.backup" ".github/last_activity.md"
+          if [ -f ".github/last_activity.md.backup" ]; then
+            echo "📦 恢复本地的 last_activity.md 文件"
+            mv .github/last_activity.md.backup .github/last_activity.md
             git add .github/last_activity.md
-            if ! git diff --cached --quiet -- .github/last_activity.md; then
-              git commit -m "保留本地 .github/last_activity.md 文件"
-            else
-              echo "文件未发生变化，无需提交"
-            fi
+            git commit -m "保留本地 last_activity.md 文件" || echo "没有需要提交的更改"
           fi
       
       - name: 推送更新
